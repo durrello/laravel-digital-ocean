@@ -42,6 +42,7 @@ jobs:
         run: |
           ssh root@104.236.3.10 <<EOF
           cd /var/www/html
+          git restore .
           git pull origin master
           cp .env.example .env
           composer install --no-interaction --prefer-dist
