@@ -58,4 +58,4 @@ jobs:
             systemctl restart apache2
           EOF
         env:
-          SERVER_IP: ${{secrets.SERVER_IP}}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
