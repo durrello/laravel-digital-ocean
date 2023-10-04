@@ -9,6 +9,8 @@ on:
   pull_request:
     branches:
       - master
+    types: [closed]
+    
   workflow_dispatch: # This allows you to manually trigger the workflow
 
 jobs:
