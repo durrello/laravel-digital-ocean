@@ -23,9 +23,6 @@ jobs:
       - name: Install Composer Dependencies
         run: composer install --no-interaction --prefer-dist
 
-      - name: Copy Environment File
-        run: cp .env.example .env
-
       - name: Generate Application Key
         run: php artisan key:generate
 
@@ -40,6 +37,11 @@ jobs:
           
       - name: Deploy to Production
         run: |
-          ssh root@104.236.3.10 "cd /var/www/html && git pull origin master"
+          ssh root@104.236.3.10 "cd /var/www/html && git pull origin master && chmod -R 755 /var/www/html"
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Restart Apache
+        run: |
+          # Restart the Apache server to apply changes.
+          sudo systemctl restart apache2
