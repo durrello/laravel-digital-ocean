@@ -50,7 +50,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SERVER_IP: ${{secrets.SERVER_IP}}
 
-       - name: Restart Server
+      - name: Restart Server
         run: |
           ssh root@$SERVER_IP <<EOF
           chmod -R 777 /var/www/html
@@ -58,6 +58,3 @@ jobs:
           EOF
         env:
           SERVER_IP: ${{secrets.SERVER_IP}}
-
-          
-     
