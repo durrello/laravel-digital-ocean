@@ -29,6 +29,17 @@ jobs:
       - name: Generate Application Key
         run: php artisan key:generate
 
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan 104.236.3.10 >> ~/.ssh/known_hosts
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          
       - name: Deploy to Production
         run: |
-          ssh -o PreferredAuthentications=laravel root@104.236.3.10 "cd /var/www/html && git pull origin master && php artisan migrate --force && php artisan optimize && php artisan route:cache && php artisan config:cache"
+          ssh root@104.236.3.10 "cd /var/www/html && git pull origin master && php artisan migrate --force && php artisan optimize && php artisan route:cache && php artisan config:cache"
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
