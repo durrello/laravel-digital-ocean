@@ -53,9 +53,6 @@ jobs:
 
       - name: SSH into Server and Restart Apache
         run: |
-          ssh -o StrictHostKeyChecking=no root@$SERVER_IP <<EOF
-            chmod -R 755 /var/www/html
-            systemctl restart apache2
-          EOF
+          ssh root@$SERVER_IP 'chmod -R 755 /var/www/html && systemctl restart apache2'
         env:
           SERVER_IP: ${{ secrets.SERVER_IP }}
