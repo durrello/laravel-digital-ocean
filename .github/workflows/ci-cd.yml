@@ -9,8 +9,7 @@ on:
   pull_request:
     branches:
       - master
-  
-  workflow_dispatch:
+  workflow_dispatch: # This allows you to manually trigger the workflow
 
 jobs:
   build-and-deploy:
@@ -32,7 +31,7 @@ jobs:
 
       - name: Install Composer Dependencies
         run: composer install --no-interaction --prefer-dist
-      
+
       - name: Copy Environment File
         run: cp .env.example .env
 
@@ -45,19 +44,16 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan $SERVER_IP >> ~/.ssh/known_hosts
-          rsync ./ root@$SERVER_IP:/var/www/html/
+          rsync -avz --exclude '.env' --exclude 'vendor/' ./ root@$SERVER_IP:/var/www/html/
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SERVER_IP: ${{secrets.SERVER_IP}}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
 
-      - name: Restart Server
+      - name: SSH into Server and Restart Apache
         run: |
-          ssh root@$SERVER_IP <<EOF
-          chmod -R 777 /var/www/html
-          systemctl restart apache2
+          ssh -o StrictHostKeyChecking=no root@$SERVER_IP <<EOF
+            chmod -R 755 /var/www/html
+            systemctl restart apache2
           EOF
         env:
-          SERVER_IP: ${{secrets.SERVER_IP}}
-
-          
-     
+          SERVER_IP: ${{ secrets.SERVER_IP }}
