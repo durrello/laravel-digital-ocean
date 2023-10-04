@@ -20,6 +20,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
+      - name: Install rsync
+        run: |
+          sudo apt update
+          sudo apt install rsync -y
+
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -40,7 +45,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan $SERVER_IP >> ~/.ssh/known_hosts
-          scp -r * root@$SERVER_IP:/var/www/html
+          rsync -avz --delete ./ root@$SERVER_IP:/var/www/html
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SERVER_IP: ${{secrets.SERVER_IP}}
