@@ -46,13 +46,19 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan $SERVER_IP >> ~/.ssh/known_hosts
-          rsync -avz --exclude '.env' --exclude 'vendor/' ./ root@$SERVER_IP:/var/www/html/
+          rsync -avz --exclude '.env' --exclude 'vendor/' ./ $SSH_USER@$SERVER_IP:/var/www/html/
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SERVER_IP: ${{ secrets.SERVER_IP }}
+          SERVER_IP: ${{ secrets.SERVER_IP }} 
+          SSH_USER: ${{ secrets.SSH_USER }}
 
       - name: SSH into Server and Restart Apache
         run: |
-          ssh root@$SERVER_IP 'chmod -R 755 /var/www/html && systemctl restart apache2'
+          ssh $SSH_USER@$SERVER_IP 'sudo chmod -R 777 /var/www/html && sudo systemctl restart apache2'
         env:
           SERVER_IP: ${{ secrets.SERVER_IP }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+
+      - name: Deployment Status
+        run: |
+          echo 'Deployment successful to Digital Ocean'
