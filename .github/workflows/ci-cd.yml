@@ -5,10 +5,10 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
     types: [closed]
     
   workflow_dispatch: # This allows you to manually trigger the workflow
